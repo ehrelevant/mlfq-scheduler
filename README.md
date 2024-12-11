@@ -1,6 +1,11 @@
 # Python MLFQ Scheduler
 
-This project's dependencies are managed by [Poetry](https://github.com/python-poetry/poetry).
+This project's dependencies are managed using [Poetry](https://github.com/python-poetry/poetry).
+
+```bash
+# Installs dependencies (Poetry)
+poetry install
+```
 
 ## Linting & Formatting
 
