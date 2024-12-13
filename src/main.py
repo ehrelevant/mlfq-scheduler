@@ -3,7 +3,7 @@ from collections.abc import Sequence
 from typing import Protocol
 
 
-class Scheduler(Protocol):
+class PriorityQueue(Protocol):
     _time_allotment: int | None
     _processes: list[Process]
     _current_process_index: int
@@ -14,7 +14,7 @@ class Scheduler(Protocol):
     def on_tick(self): ...
 
 
-class RRScheduler:
+class RRPriorityQueue:
     _time_allotment: int | None
     _processes: list[Process]
     _current_process_index: int
@@ -29,20 +29,20 @@ class RRScheduler:
         self._time_quantum = time_quantum
 
     def __repr__(self) -> str:
-        return f'[{', '.join(map(str, self._processes))}]'
+        return str(self._processes)
 
     def __str__(self) -> str:
-        return f'[{', '.join(map(str, self._processes))}]'
+        return str(self._processes)
 
     @property
     def num_processes(self) -> int:
         return len(self._processes)
 
-    def on_tick(self) -> None:
+    def on_tick(self):
         pass
 
 
-class FCFSScheduler:
+class FCFSPriorityQueue:
     _time_allotment: int | None
     _processes: list[Process]
     _current_process_index: int
@@ -54,20 +54,20 @@ class FCFSScheduler:
         self._current_process_index = 0
 
     def __repr__(self) -> str:
-        return f'[{', '.join(map(str, self._processes))}]'
+        return str(self._processes)
 
     def __str__(self) -> str:
-        return f'[{', '.join(map(str, self._processes))}]'
+        return str(self._processes)
 
     @property
     def num_processes(self) -> int:
         return len(self._processes)
 
-    def on_tick(self) -> None:
+    def on_tick(self):
         pass
 
 
-class SJFScheduler:
+class SJFPriorityQueue:
     _time_allotment: int | None
     _processes: list[Process]
     _current_process_index: int
@@ -79,16 +79,16 @@ class SJFScheduler:
         self._current_process_index = 0
 
     def __repr__(self) -> str:
-        return f'[{', '.join(map(str, self._processes))}]'
+        return str(self._processes)
 
     def __str__(self) -> str:
-        return f'[{', '.join(map(str, self._processes))}]'
+        return str(self._processes)
 
     @property
     def num_processes(self) -> int:
         return len(self._processes)
 
-    def on_tick(self) -> None:
+    def on_tick(self):
         pass
 
 
@@ -117,28 +117,32 @@ class Process:
 
 class MultiLevelFeedbackQueue:
     _processes: Sequence[Process]
-    _schedulers: Sequence[Scheduler]
+    _priority_queues: Sequence[PriorityQueue]
     _context_switch_time: int
 
     def __init__(
         self,
         processes: Sequence[Process],
-        schedulers: Sequence[Scheduler],
+        priority_queues: Sequence[PriorityQueue],
         context_switch_time: int = 0,
     ) -> None:
         self._processes = processes
-        self._schedulers = schedulers
+        self._priority_queues = priority_queues
         self._context_switch_time = context_switch_time
 
     def __repr__(self) -> str:
-        # todo: find a better way to format this multiline f-string
-        return f"""
-Processes: {self._processes}
-Schedulers: {self._schedulers}
-Context Switch Time: {self._context_switch_time}
-            """.strip()
+        return "\n".join(
+            [
+                f"Processes: {self._processes}",
+                f"PriorityQueues: {self._priority_queues}",
+                f"Context Switch Time: {self._context_switch_time}",
+            ]
+        )
 
-    def on_tick(self) -> None:
+    def on_tick(self):
+        pass
+
+    def run(self):
         pass
 
 
@@ -153,21 +157,18 @@ def main() -> None:
 
     processes: list[Process] = []
     for _ in range(num_processes):
-        process_raw: list[str] = input().split(";")
-        processes.append(
-            Process(
-                process_raw[0], int(process_raw[1]), list(map(int, process_raw[2:]))
-            )
-        )
+        [process_name, *process_details] = input().split()
+        [arrival_time, *burst_times] = map(int, process_details)
+        processes.append(Process(process_name, arrival_time, burst_times))
 
-    schedulers: list[Scheduler] = [
-        RRScheduler(time_allotment_q1),
-        FCFSScheduler(time_allotment_q2),
-        SJFScheduler(None),
+    priority_queues: list[PriorityQueue] = [
+        RRPriorityQueue(time_allotment_q1),
+        FCFSPriorityQueue(time_allotment_q2),
+        SJFPriorityQueue(None),
     ]
 
     mlfq: MultiLevelFeedbackQueue = MultiLevelFeedbackQueue(
-        processes, schedulers, context_switch_time
+        processes, priority_queues, context_switch_time
     )
 
     print(mlfq)
