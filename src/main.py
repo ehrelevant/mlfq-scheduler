@@ -131,11 +131,11 @@ class MultiLevelFeedbackQueue:
         self._context_switch_time = context_switch_time
 
     def __repr__(self) -> str:
-        return "\n".join(
+        return '\n'.join(
             [
-                f"Processes: {self._processes}",
-                f"PriorityQueues: {self._priority_queues}",
-                f"Context Switch Time: {self._context_switch_time}",
+                f'Processes: {self._processes}',
+                f'PriorityQueues: {self._priority_queues}',
+                f'Context Switch Time: {self._context_switch_time}',
             ]
         )
 
@@ -174,5 +174,5 @@ def main() -> None:
     print(mlfq)
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     main()
