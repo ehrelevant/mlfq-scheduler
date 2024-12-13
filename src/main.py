@@ -157,7 +157,7 @@ def main() -> None:
 
     processes: list[Process] = []
     for _ in range(num_processes):
-        [process_name, *process_details] = input().split()
+        [process_name, *process_details] = input().split(';')
         [arrival_time, *burst_times] = map(int, process_details)
         processes.append(Process(process_name, arrival_time, burst_times))
 
