@@ -1,8 +1,12 @@
-from project_types import ( 
-    Process, 
-    PriorityQueue, RRPriorityQueue, FCFSPriorityQueue, SJFPriorityQueue, 
-    MultiLevelFeedbackQueue
+from project_types import (
+    Process,
+    PriorityQueue,
+    RRPriorityQueue,
+    FCFSPriorityQueue,
+    SJFPriorityQueue,
+    MultiLevelFeedbackQueue,
 )
+
 
 class MLFQModel:
     # initialize variables (and lists are currently empty)
@@ -39,7 +43,7 @@ class MLFQModel:
             FCFSPriorityQueue(self._time_allotment_q2),
             SJFPriorityQueue(None),
         ]
-    
+
     # self-explanatory
     def setup_mlfq(self):
         self._mlfq: MultiLevelFeedbackQueue = MultiLevelFeedbackQueue(
@@ -50,9 +54,7 @@ class MLFQModel:
     @property
     def num_processes(self) -> int:
         return self._num_processes
-    
+
     @property
     def mlfq(self) -> MultiLevelFeedbackQueue:
         return self._mlfq
-
-    
