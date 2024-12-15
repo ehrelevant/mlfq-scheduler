@@ -1,6 +1,6 @@
 from __future__ import annotations
 from collections.abc import Sequence
-from typing import Protocol
+from typing import Protocol, Tuple
 
 
 class PriorityQueue(Protocol):
@@ -13,6 +13,8 @@ class PriorityQueue(Protocol):
 
     def on_tick(self): ...
 
+    def push_process(self, process: Process): ...
+
 
 class RRPriorityQueue:
     _time_allotment: int | None
@@ -21,7 +23,9 @@ class RRPriorityQueue:
 
     _time_quantum: int
 
-    def __init__(self, time_allotment: int | None, time_quantum: int = 4) -> None:
+    def __init__(
+        self, time_allotment: int | None = None, time_quantum: int = 4
+    ) -> None:
         self._time_allotment = time_allotment
         self._processes = []
         self._current_process_index = 0
@@ -41,13 +45,16 @@ class RRPriorityQueue:
     def on_tick(self):
         pass
 
+    def push_process(self, process: Process):
+        self._processes.append(process)
+
 
 class FCFSPriorityQueue:
     _time_allotment: int | None
     _processes: list[Process]
     _current_process_index: int
 
-    def __init__(self, time_allotment: int | None) -> None:
+    def __init__(self, time_allotment: int | None = None) -> None:
         self._time_allotment = time_allotment
 
         self._processes = []
@@ -65,6 +72,9 @@ class FCFSPriorityQueue:
 
     def on_tick(self):
         pass
+
+    def push_process(self, process: Process):
+        self._processes.append(process)
 
 
 class SJFPriorityQueue:
@@ -72,7 +82,7 @@ class SJFPriorityQueue:
     _processes: list[Process]
     _current_process_index: int
 
-    def __init__(self, time_allotment: int | None) -> None:
+    def __init__(self, time_allotment: int | None = None) -> None:
         self._time_allotment = time_allotment
 
         self._processes = []
@@ -90,6 +100,9 @@ class SJFPriorityQueue:
 
     def on_tick(self):
         pass
+
+    def push_process(self, process: Process):
+        self._processes.append(process)
 
 
 class Process:
@@ -114,42 +127,59 @@ class Process:
     def process_name(self) -> str:
         return self._process_name
 
+    @property
+    def arrival_time(self) -> int:
+        return self._arrival_time
+
 
 class MultiLevelFeedbackQueue:
-    _processes: Sequence[Process]
+    _tick: int = 0
+    _future_processes: Sequence[Process]
     _priority_queues: Sequence[PriorityQueue]
     _context_switch_time: int
 
     def __init__(
         self,
-        processes: Sequence[Process],
+        future_processes: Sequence[Process],
         priority_queues: Sequence[PriorityQueue],
         context_switch_time: int = 0,
     ) -> None:
-        self._processes = processes
+        self._future_processes = future_processes
         self._priority_queues = priority_queues
         self._context_switch_time = context_switch_time
 
     def __repr__(self) -> str:
         return '\n'.join(
             [
-                f'Processes: {self._processes}',
+                f'Processes: {self._future_processes}',
                 f'PriorityQueues: {self._priority_queues}',
                 f'Context Switch Time: {self._context_switch_time}',
             ]
         )
 
     def on_tick(self):
-        pass
+        newly_arrived_processes = sorted(
+            filter(lambda p: p.arrival_time == self._tick, self._future_processes),
+            key=lambda p: p.process_name,
+        )
+
+        if newly_arrived_processes:
+            print(f'New processes (t = {self._tick}): {newly_arrived_processes}')
+
+            for process in newly_arrived_processes:
+                self._priority_queues[0].push_process(process)
+
+        self._tick += 1
 
     def run(self):
-        pass
+        for _ in range(10):
+            self.on_tick()
 
 
 # ---
 
 
-def main() -> None:
+def get_user_input() -> Tuple[int, int, int, list[Process]]:
     num_processes: int = int(input())
     time_allotment_q1: int = int(input())
     time_allotment_q2: int = int(input())
@@ -160,6 +190,28 @@ def main() -> None:
         [process_name, *process_details] = input().split(';')
         [arrival_time, *burst_times] = map(int, process_details)
         processes.append(Process(process_name, arrival_time, burst_times))
+
+    return time_allotment_q1, time_allotment_q2, context_switch_time, processes
+
+
+def get_fake_input() -> Tuple[int, int, int, list[Process]]:
+    # I gave up on making tests
+    time_allotment_q1: int = 8
+    time_allotment_q2: int = 8
+    context_switch_time: int = 0
+    processes: list[Process] = [
+        Process('B', 0, [5, 2, 5, 2, 5]),
+        Process('A', 2, [2, 2, 6]),
+        Process('C', 0, [30]),
+    ]
+
+    return time_allotment_q1, time_allotment_q2, context_switch_time, processes
+
+
+def main() -> None:
+    time_allotment_q1, time_allotment_q2, context_switch_time, processes = (
+        get_fake_input()
+    )
 
     priority_queues: list[PriorityQueue] = [
         RRPriorityQueue(time_allotment_q1),
@@ -172,6 +224,8 @@ def main() -> None:
     )
 
     print(mlfq)
+
+    mlfq.run()
 
 
 if __name__ == '__main__':
