@@ -1,6 +1,6 @@
 from __future__ import annotations
 from collections.abc import Sequence
-from typing import Protocol, Tuple
+from typing import Protocol
 
 
 class PriorityQueue(Protocol):
@@ -179,7 +179,7 @@ class MultiLevelFeedbackQueue:
 # ---
 
 
-def get_user_input() -> Tuple[int, int, int, list[Process]]:
+def get_user_input() -> tuple[int, int, int, list[Process]]:
     num_processes: int = int(input())
     time_allotment_q1: int = int(input())
     time_allotment_q2: int = int(input())
@@ -194,7 +194,7 @@ def get_user_input() -> Tuple[int, int, int, list[Process]]:
     return time_allotment_q1, time_allotment_q2, context_switch_time, processes
 
 
-def get_fake_input() -> Tuple[int, int, int, list[Process]]:
+def get_fake_input() -> tuple[int, int, int, list[Process]]:
     # I gave up on making tests
     time_allotment_q1: int = 8
     time_allotment_q2: int = 8
