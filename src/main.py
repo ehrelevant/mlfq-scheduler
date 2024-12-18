@@ -51,8 +51,7 @@ class Process:
     @property
     def is_CPU_burst(self) -> bool:
         return bool(self._burst_index % 2 == 0)
-
-    @property
+    
     def on_tick(self) -> None:
         '''
         Updates the process burst time and time in queue
@@ -78,7 +77,6 @@ class Process:
     def is_within_allotment(self, time_allotment: int) -> bool:
         return self._time_in_queue < time_allotment
 
-    @property
     def demote(self):
         '''
         Demotes the process to a lower queue
@@ -99,7 +97,7 @@ class PriorityQueue(Protocol):
 
     @property
     def is_empty(self) -> bool: ...
-
+    
     def on_tick(self):
         '''
         Reduce quantum count and run process
@@ -161,7 +159,7 @@ class RRPriorityQueue(PriorityQueue):
             return
 
         self._time_quantum_counter -= 1
-        self._processes[0].on_tick
+        self._processes[0].on_tick()
 
     def push_process(self, process: Process):
         self._processes.append(process)
@@ -218,7 +216,7 @@ class FCFSPriorityQueue(PriorityQueue):
         if self.is_empty:
             return
 
-        self._processes[0].on_tick
+        self._processes[0].on_tick()
 
     def push_process(self, process: Process):
         self._processes.append(process)
@@ -270,7 +268,7 @@ class SJFPriorityQueue(PriorityQueue):
         if self.is_empty:
             return
 
-        self._processes[self._current_process_index].on_tick
+        self._processes[self._current_process_index].on_tick()
 
     def push_process(self, process: Process):
         self._processes.append(process)
@@ -314,7 +312,7 @@ class IO:
     
     def on_tick(self):
         for process in self._processes:
-            process.on_tick
+            process.on_tick()
 
     def push_process(self, process: Process):
         self._processes.append(process)
@@ -450,7 +448,7 @@ class MultiLevelFeedbackQueue:
         # Reassign demoted processes
         for process in demoted_processes:
             print(f'{process.process_name} DEMOTED')
-            process.demote
+            process.demote()
             self._priority_queues[process.queue_level].push_process(process)
 
         # Reassign based on IO or CPU burst completion
