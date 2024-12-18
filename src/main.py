@@ -10,6 +10,8 @@ class Process:
     _burst_index: int
     _queue_level: int
     _time_in_queue: int
+    _completion_time: int | None
+    _cpu_time: int
 
     def __init__(
         self, process_name: str, arrival_time: int, burst_times: list[int]
@@ -21,6 +23,8 @@ class Process:
         self._burst_index = 0
         self._queue_level = 0
         self._time_in_queue = 0
+        self._completion_time = None
+        self._cpu_time = sum(burst_times[0::2])
 
     def __repr__(self) -> str:
         return self._process_name
@@ -37,6 +41,34 @@ class Process:
         return self._arrival_time
 
     @property
+    def completion_time(self) -> int:
+        if self._completion_time is None:
+            raise Exception(
+                "Error: Attempted to access property 'completion_time' of unfinished process."
+            )
+
+        return self._completion_time
+
+    @property
+    def turnaround_time(self) -> int:
+        if self._completion_time is None:
+            raise Exception(
+                "Error: Attempted to access property 'turnaround_time' of unfinished process."
+            )
+
+        return self._completion_time - self._arrival_time
+
+    @property
+    def waiting_time(self) -> int:
+        if self._completion_time is None:
+            raise Exception(
+                "Error: Attempted to access property 'waiting_time' of unfinished process."
+            )
+
+        # todo: fix formula for waiting time
+        return self._completion_time - self._arrival_time - self._cpu_time
+
+    @property
     def queue_level(self) -> int:
         return self._queue_level
 
@@ -51,19 +83,19 @@ class Process:
     @property
     def is_CPU_burst(self) -> bool:
         return bool(self._burst_index % 2 == 0)
-    
+
     def on_tick(self) -> None:
-        '''
+        """
         Updates the process burst time and time in queue
-        '''
+        """
         self._time_in_queue += 1
         self._burst_times[self._burst_index] -= 1
 
     @property
     def next_burst(self) -> None:
-        '''
+        """
         Updates the pointer to what burst (IO or CPU) should be running
-        '''
+        """
         self._burst_index += 1
 
     @property
@@ -78,11 +110,14 @@ class Process:
         return self._time_in_queue < time_allotment
 
     def demote(self):
-        '''
+        """
         Demotes the process to a lower queue
-        '''
+        """
         self._queue_level += 1
         self._time_in_queue = 0
+
+    def end_process(self, time: int):
+        self._completion_time = time
 
 
 class PriorityQueue(Protocol):
@@ -97,30 +132,30 @@ class PriorityQueue(Protocol):
 
     @property
     def is_empty(self) -> bool: ...
-    
+
     def on_tick(self):
-        '''
+        """
         Reduce quantum count and run process
-        '''
+        """
         ...
 
-    def push_process(self, process: Process):
-        ...
+    def push_process(self, process: Process): ...
 
     # Only one process can be released (current)
     # We define expired processes as processes that have either completed a burst
     # or have used their entire time allocation for a priority queue
-    def release_current_on_expiry(self) -> Process | None: 
-        '''
+    def release_current_on_expiry(self) -> Process | None:
+        """
         Release process when quantum is used up
-        '''
+        """
         ...
 
-    def select_new_process(self) -> Process | None: 
-        '''
+    def select_new_process(self) -> Process | None:
+        """
         Select new process to run
-        '''
+        """
         ...
+
 
 class RRPriorityQueue(PriorityQueue):
     _time_allotment: int | None
@@ -187,6 +222,7 @@ class RRPriorityQueue(PriorityQueue):
 
         return self._processes[0]
 
+
 class FCFSPriorityQueue(PriorityQueue):
     _time_allotment: int | None
     _processes: list[Process] = []
@@ -207,7 +243,7 @@ class FCFSPriorityQueue(PriorityQueue):
     @property
     def processes(self) -> list[Process]:
         return self._processes
-    
+
     @property
     def is_empty(self) -> bool:
         return len(self._processes) == 0
@@ -238,6 +274,7 @@ class FCFSPriorityQueue(PriorityQueue):
 
         return self._processes[0]
 
+
 class SJFPriorityQueue(PriorityQueue):
     _time_allotment: int | None
     _processes: list[Process] = []
@@ -259,7 +296,7 @@ class SJFPriorityQueue(PriorityQueue):
     @property
     def processes(self) -> list[Process]:
         return self._processes
-    
+
     @property
     def is_empty(self) -> bool:
         return len(self._processes) == 0
@@ -294,6 +331,7 @@ class SJFPriorityQueue(PriorityQueue):
         )
         return self._processes[self._current_process_index]
 
+
 class IO:
     _processes: list[Process]
 
@@ -302,14 +340,14 @@ class IO:
 
     def __repr__(self) -> str:
         return str(self._processes)
-    
+
     def __str__(self) -> str:
         return str(self._processes)
 
     @property
     def is_empty(self) -> bool:
         return len(self._processes) == 0
-    
+
     def on_tick(self):
         for process in self._processes:
             process.on_tick()
@@ -318,9 +356,9 @@ class IO:
         self._processes.append(process)
 
     def release_expired_processes(self) -> list[Process]:
-        '''
+        """
         Release processes from IO once burst time is used up
-        '''
+        """
         expired_processes: list[Process] = [
             process for process in self._processes if process.is_burst_complete
         ]
@@ -331,8 +369,10 @@ class IO:
 
         return expired_processes
 
+
 class MultiLevelFeedbackQueue:
     _tick: int = 0
+    _all_processes: list[Process]
     _future_processes: list[Process]
     _priority_queues: Sequence[PriorityQueue]
     _io: IO
@@ -347,6 +387,7 @@ class MultiLevelFeedbackQueue:
         priority_queues: Sequence[PriorityQueue],
         context_switch_time: int = 0,
     ) -> None:
+        self._all_processes = list(future_processes)
         self._future_processes = list(future_processes)
         self._priority_queues = priority_queues
         self._context_switch_time = context_switch_time
@@ -370,9 +411,9 @@ class MultiLevelFeedbackQueue:
         )
 
     def on_tick(self):
-        '''
+        """
         Run both IO and CPU Ticks
-        '''
+        """
         self._tick += 1
 
         # IO Tick
@@ -389,9 +430,9 @@ class MultiLevelFeedbackQueue:
                 break
 
     def push_arriving_processes(self):
-        '''
+        """
         Push all processes arriving during the tick
-        '''
+        """
         newly_arrived_processes = sorted(
             [
                 process
@@ -412,9 +453,9 @@ class MultiLevelFeedbackQueue:
                 self._priority_queues[0].push_process(process)
 
     def reschedule_expired_processes(self):
-        '''
+        """
         Reassign complete, demoted and requeue processes on Queues (either IO, Q1, Q2, or Q3)
-        '''
+        """
         completed_processes: list[Process] = []
         burst_completed_processes: list[Process] = []
         demoted_processes: list[Process] = []
@@ -425,6 +466,7 @@ class MultiLevelFeedbackQueue:
             if process:
                 if process.is_process_complete:
                     completed_processes.append(process)
+                    process.end_process(self._tick)
                 elif process.is_burst_complete:
                     burst_completed_processes.append(process)
                 else:
@@ -433,7 +475,9 @@ class MultiLevelFeedbackQueue:
         # Check IO and release finished IO processes
         io_completed_processes = self._io.release_expired_processes()
         for process in io_completed_processes:
-            if not process.is_process_complete:
+            if process.is_process_complete:
+                process.end_process(self._tick)
+            else:
                 burst_completed_processes.append(process)
 
         # Sorting alphabetically
@@ -485,10 +529,10 @@ class MultiLevelFeedbackQueue:
             self._current_process = next_process
 
     def run(self):
-        '''
+        """
         Run the MLFQ simulation.
         Note that the context switch runs first *when the program is simulated*.
-        '''
+        """
         self.context_switch()
         while not self.is_empty:
             print(f'At Time = {self._tick}')
@@ -514,6 +558,26 @@ class MultiLevelFeedbackQueue:
                 print(f'IO : {self._io}')
 
             print()
+
+        print('SIMULATION DONE\n')
+
+        # todo: remove return once process running works
+        # return
+
+        # print turnaround time of each process
+        for p in self._all_processes:
+            print(
+                f'Turn-around time for Process {p.process_name} : {p.completion_time} - {p.arrival_time} = {p.turnaround_time} ms'
+            )
+
+        # print average turnaround time
+        print(
+            f'Average Turn-around time = {sum([p.turnaround_time for p in self._all_processes])/len(self._all_processes)} ms'
+        )
+
+        # process turnaround times
+        for p in self._all_processes:
+            print(f'Waiting time for Process {p.process_name} : {p.waiting_time} ms')
 
 
 # ---
