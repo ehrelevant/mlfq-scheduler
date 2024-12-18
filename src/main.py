@@ -52,23 +52,37 @@ class Process:
     def is_CPU_burst(self) -> bool:
         return bool(self._burst_index % 2 == 0)
 
-    def on_tick(self):
+    @property
+    def on_tick(self) -> None:
+        '''
+        Updates the process burst time and time in queue
+        '''
         self._time_in_queue += 1
         self._burst_times[self._burst_index] -= 1
 
-    def next_burst(self):
+    @property
+    def next_burst(self) -> None:
+        '''
+        Updates the pointer to what burst (IO or CPU) should be running
+        '''
         self._burst_index += 1
 
+    @property
     def is_burst_complete(self) -> bool:
         return self._burst_times[self._burst_index] <= 0
 
-    def is_complete(self) -> bool:
+    @property
+    def is_process_complete(self) -> bool:
         return all(burst <= 0 for burst in self._burst_times)
 
     def is_within_allotment(self, time_allotment: int) -> bool:
         return self._time_in_queue < time_allotment
 
+    @property
     def demote(self):
+        '''
+        Demotes the process to a lower queue
+        '''
         self._queue_level += 1
         self._time_in_queue = 0
 
@@ -83,21 +97,34 @@ class PriorityQueue(Protocol):
     @property
     def processes(self) -> list[Process]: ...
 
-    def on_tick(self): ...
+    @property
+    def is_empty(self) -> bool: ...
 
-    def push_process(self, process: Process): ...
+    def on_tick(self):
+        '''
+        Reduce quantum count and run process
+        '''
+        ...
+
+    def push_process(self, process: Process):
+        ...
 
     # Only one process can be released (current)
     # We define expired processes as processes that have either completed a burst
     # or have used their entire time allocation for a priority queue
-    def release_current_on_expiry(self) -> Process | None: ...
+    def release_current_on_expiry(self) -> Process | None: 
+        '''
+        Release process when quantum is used up
+        '''
+        ...
 
-    def select_new_process(self) -> Process | None: ...
+    def select_new_process(self) -> Process | None: 
+        '''
+        Select new process to run
+        '''
+        ...
 
-    def is_empty(self) -> bool: ...
-
-
-class RRPriorityQueue:
+class RRPriorityQueue(PriorityQueue):
     _time_allotment: int | None
     _processes: list[Process] = []
 
@@ -125,22 +152,26 @@ class RRPriorityQueue:
     def processes(self) -> list[Process]:
         return self._processes
 
+    @property
+    def is_empty(self) -> bool:
+        return len(self._processes) == 0
+
     def on_tick(self):
-        if self.is_empty():
+        if self.is_empty:
             return
 
         self._time_quantum_counter -= 1
-        self._processes[0].on_tick()
+        self._processes[0].on_tick
 
     def push_process(self, process: Process):
         self._processes.append(process)
 
     def release_current_on_expiry(self) -> Process | None:
-        if self.is_empty():
+        if self.is_empty:
             return
 
         current_process = self._processes[0]
-        if current_process.is_burst_complete() or (
+        if current_process.is_burst_complete or (
             self._time_allotment
             and not current_process.is_within_allotment(self._time_allotment)
         ):
@@ -148,7 +179,7 @@ class RRPriorityQueue:
             return self._processes.pop(0)
 
     def select_new_process(self) -> Process | None:
-        if self.is_empty():
+        if self.is_empty:
             return
 
         if self._time_quantum_counter <= 0:
@@ -158,11 +189,7 @@ class RRPriorityQueue:
 
         return self._processes[0]
 
-    def is_empty(self) -> bool:
-        return len(self._processes) == 0
-
-
-class FCFSPriorityQueue:
+class FCFSPriorityQueue(PriorityQueue):
     _time_allotment: int | None
     _processes: list[Process] = []
 
@@ -182,38 +209,38 @@ class FCFSPriorityQueue:
     @property
     def processes(self) -> list[Process]:
         return self._processes
+    
+    @property
+    def is_empty(self) -> bool:
+        return len(self._processes) == 0
 
     def on_tick(self):
-        if self.is_empty():
+        if self.is_empty:
             return
 
-        self._processes[0].on_tick()
+        self._processes[0].on_tick
 
     def push_process(self, process: Process):
         self._processes.append(process)
 
     def release_current_on_expiry(self) -> Process | None:
-        if self.is_empty():
+        if self.is_empty:
             return
 
         current_process = self._processes[0]
-        if current_process.is_burst_complete() or (
+        if current_process.is_burst_complete or (
             self._time_allotment
             and not current_process.is_within_allotment(self._time_allotment)
         ):
             return self._processes.pop(0)
 
     def select_new_process(self) -> Process | None:
-        if self.is_empty():
+        if self.is_empty:
             return
 
         return self._processes[0]
 
-    def is_empty(self) -> bool:
-        return len(self._processes) == 0
-
-
-class SJFPriorityQueue:
+class SJFPriorityQueue(PriorityQueue):
     _time_allotment: int | None
     _processes: list[Process] = []
     _current_process_index: int = 0
@@ -234,29 +261,33 @@ class SJFPriorityQueue:
     @property
     def processes(self) -> list[Process]:
         return self._processes
+    
+    @property
+    def is_empty(self) -> bool:
+        return len(self._processes) == 0
 
     def on_tick(self):
-        if self.is_empty():
+        if self.is_empty:
             return
 
-        self._processes[self._current_process_index].on_tick()
+        self._processes[self._current_process_index].on_tick
 
     def push_process(self, process: Process):
         self._processes.append(process)
 
     def release_current_on_expiry(self) -> Process | None:
-        if self.is_empty():
+        if self.is_empty:
             return
 
         current_process = self._processes[self._current_process_index]
-        if current_process.is_burst_complete() or (
+        if current_process.is_burst_complete or (
             self._time_allotment
             and not current_process.is_within_allotment(self._time_allotment)
         ):
             return self._processes.pop(self._current_process_index)
 
     def select_new_process(self) -> Process | None:
-        if self.is_empty():
+        if self.is_empty:
             return
 
         self._current_process_index = min(
@@ -265,29 +296,35 @@ class SJFPriorityQueue:
         )
         return self._processes[self._current_process_index]
 
-    def is_empty(self) -> bool:
-        return len(self._processes) == 0
-
-
 class IO:
     _processes: list[Process]
 
     def __init__(self) -> None:
         self._processes = []
 
-    def on_tick(self):
-        for process in self._processes:
-            process.on_tick()
+    def __repr__(self) -> str:
+        return str(self._processes)
+    
+    def __str__(self) -> str:
+        return str(self._processes)
 
+    @property
     def is_empty(self) -> bool:
         return len(self._processes) == 0
+    
+    def on_tick(self):
+        for process in self._processes:
+            process.on_tick
 
     def push_process(self, process: Process):
         self._processes.append(process)
 
     def release_expired_processes(self) -> list[Process]:
+        '''
+        Release processes from IO once burst time is used up
+        '''
         expired_processes: list[Process] = [
-            process for process in self._processes if process.is_burst_complete()
+            process for process in self._processes if process.is_burst_complete
         ]
 
         # Removes expired processes from IO
@@ -295,13 +332,6 @@ class IO:
             self._processes.remove(process)
 
         return expired_processes
-
-    def __repr__(self) -> str:
-        return str(self._processes)
-
-    def __str__(self) -> str:
-        return str(self._processes)
-
 
 class MultiLevelFeedbackQueue:
     _tick: int = 0
@@ -333,7 +363,18 @@ class MultiLevelFeedbackQueue:
             ]
         )
 
+    @property
+    def is_empty(self):
+        return all(
+            [queue.is_empty for queue in self._priority_queues]
+            + [len(self._future_processes) == 0]
+            + [self._io.is_empty]
+        )
+
     def on_tick(self):
+        '''
+        Run both IO and CPU Ticks
+        '''
         self._tick += 1
 
         # IO Tick
@@ -345,19 +386,14 @@ class MultiLevelFeedbackQueue:
             return
 
         for queue in self._priority_queues:
-            if not queue.is_empty():
+            if not queue.is_empty:
                 queue.on_tick()
                 break
 
-
-    def is_empty(self):
-        return all(
-            [queue.is_empty() for queue in self._priority_queues]
-            + [len(self._future_processes) == 0]
-            + [self._io.is_empty()]
-        )
-
     def push_arriving_processes(self):
+        '''
+        Push all processes arriving during the tick
+        '''
         newly_arrived_processes = sorted(
             [
                 process
@@ -378,23 +414,28 @@ class MultiLevelFeedbackQueue:
                 self._priority_queues[0].push_process(process)
 
     def reschedule_expired_processes(self):
+        '''
+        Reassign complete, demoted and requeue processes on Queues (either IO, Q1, Q2, or Q3)
+        '''
         completed_processes: list[Process] = []
         burst_completed_processes: list[Process] = []
         demoted_processes: list[Process] = []
 
+        # Check all priority queues and sort into three separate lists
         for queue in self._priority_queues:
             process = queue.release_current_on_expiry()
             if process:
-                if process.is_complete():
+                if process.is_process_complete:
                     completed_processes.append(process)
-                elif process.is_burst_complete():
+                elif process.is_burst_complete:
                     burst_completed_processes.append(process)
                 else:
                     demoted_processes.append(process)
 
+        # Check IO and release finished IO processes
         io_completed_processes = self._io.release_expired_processes()
         for process in io_completed_processes:
-            if not process.is_complete():
+            if not process.is_process_complete:
                 burst_completed_processes.append(process)
 
         # Sorting alphabetically
@@ -402,16 +443,19 @@ class MultiLevelFeedbackQueue:
         burst_completed_processes.sort(key=lambda p: p.process_name)
         demoted_processes.sort(key=lambda p: p.process_name)
 
+        # Output all finished processes (i.e. all burst times are now 0)
         for process in completed_processes:
             print(f'{process.process_name} DONE')
 
+        # Reassign demoted processes
         for process in demoted_processes:
             print(f'{process.process_name} DEMOTED')
-            process.demote()
+            process.demote
             self._priority_queues[process.queue_level].push_process(process)
 
+        # Reassign based on IO or CPU burst completion
         for process in burst_completed_processes:
-            process.next_burst()
+            process.next_burst
 
             if process.is_CPU_burst:
                 self._priority_queues[process.queue_level].push_process(process)
@@ -430,7 +474,7 @@ class MultiLevelFeedbackQueue:
         next_process: Process | None = None
 
         for queue in self._priority_queues:
-            if not queue.is_empty():
+            if not queue.is_empty:
                 next_process = queue.select_new_process()
                 break
 
@@ -443,8 +487,12 @@ class MultiLevelFeedbackQueue:
             self._current_process = next_process
 
     def run(self):
+        '''
+        Run the MLFQ simulation.
+        Note that the context switch runs first *when the program is simulated*.
+        '''
         self.context_switch()
-        while not self.is_empty():
+        while not self.is_empty:
             print(f'At Time = {self._tick}')
             self.push_arriving_processes()
             self.reschedule_expired_processes()
@@ -464,7 +512,7 @@ class MultiLevelFeedbackQueue:
             else:
                 print('CPU : []')
 
-            if not self._io.is_empty():
+            if not self._io.is_empty:
                 print(f'IO : {self._io}')
 
             print()
@@ -492,7 +540,7 @@ def get_fake_input() -> tuple[int, int, int, list[Process]]:
     # I gave up on making tests
     time_allotment_q1: int = 8
     time_allotment_q2: int = 8
-    context_switch_time: int = 2
+    context_switch_time: int = 0
     processes: list[Process] = [
         Process('B', 0, [5, 2, 5, 2, 5]),
         Process('A', 2, [2, 2]),
