@@ -260,10 +260,10 @@ class SJFPriorityQueue:
             return
 
         self._current_process_index = min(
-            range(len(self._processes)), 
-            key=lambda i: self._processes[i].remaining_current_burst
+            range(len(self._processes)),
+            key=lambda i: self._processes[i].remaining_current_burst,
         )
-        return self._processes[self._current_process_index] 
+        return self._processes[self._current_process_index]
 
     def is_empty(self) -> bool:
         return len(self._processes) == 0
@@ -286,7 +286,9 @@ class IO:
         self._processes.append(process)
 
     def release_expired_processes(self) -> list[Process]:
-        expired_processes: list[Process] = [process for process in self._processes if process.is_burst_complete()]
+        expired_processes: list[Process] = [
+            process for process in self._processes if process.is_burst_complete()
+        ]
 
         # Removes expired processes from IO
         for process in expired_processes:
@@ -321,7 +323,6 @@ class MultiLevelFeedbackQueue:
         self._context_switch_time = context_switch_time
         self._io = IO()
 
-
     def __repr__(self) -> str:
         return '\n'.join(
             [
@@ -348,11 +349,18 @@ class MultiLevelFeedbackQueue:
         self._tick += 1
 
     def is_empty(self):
-        return all([queue.is_empty() for queue in self._priority_queues] + [len(self._future_processes) == 0])
+        return all(
+            [queue.is_empty() for queue in self._priority_queues]
+            + [len(self._future_processes) == 0]
+        )
 
     def push_arriving_processes(self):
         newly_arrived_processes = sorted(
-            [process for process in self._future_processes if process.arrival_time == self._tick],
+            [
+                process
+                for process in self._future_processes
+                if process.arrival_time == self._tick
+            ],
             key=lambda p: p.process_name,
         )
 
@@ -365,7 +373,6 @@ class MultiLevelFeedbackQueue:
 
             for process in newly_arrived_processes:
                 self._priority_queues[0].push_process(process)
-
 
     def reschedule_expired_processes(self):
         completed_processes: list[Process] = []
@@ -382,7 +389,7 @@ class MultiLevelFeedbackQueue:
                 else:
                     demoted_processes.append(process)
 
-        io_completed_processes = self._io.release_expired_processes() 
+        io_completed_processes = self._io.release_expired_processes()
         for process in io_completed_processes:
             if not process.is_complete():
                 burst_completed_processes.append(process)
@@ -409,7 +416,7 @@ class MultiLevelFeedbackQueue:
                 self._io.push_process(process)
 
     def context_switch(self):
-        # ASSUMPTIONS: 
+        # ASSUMPTIONS:
         # - Context switch cannot be interrupted if already ongoing
         #   - If a higher priority process enters mid-switch, it will have to wait to do a context switch
         # - All priority queues are pre-emptive
@@ -427,15 +434,14 @@ class MultiLevelFeedbackQueue:
         if self._current_process != next_process:
             self._current_process = next_process
             self.reset_context_switch_counter()
-    
-            
+
     def reset_context_switch_counter(self):
         self._context_switch_counter = self._context_switch_time
-            
+
     def run(self):
         self.context_switch()
         while not self.is_empty():
-            print(f"At Time = {self._tick}")
+            print(f'At Time = {self._tick}')
             self.push_arriving_processes()
             self.reschedule_expired_processes()
             self.context_switch()
@@ -443,7 +449,10 @@ class MultiLevelFeedbackQueue:
 
             # Has to be done this way to remove the current process
             queue_processes_list = [queue.processes for queue in self._priority_queues]
-            queues_waiting_processes = [list(filter(lambda p: p != self._current_process, processes)) for processes in queue_processes_list]
+            queues_waiting_processes = [
+                list(filter(lambda p: p != self._current_process, processes))
+                for processes in queue_processes_list
+            ]
             print(f'Queues : { ";".join(map(str, queues_waiting_processes)) }')
 
             if self._current_process:
