@@ -310,6 +310,7 @@ class MultiLevelFeedbackQueue:
     _io: IO
     _context_switch_time: int
     _context_switch_counter: int = 0
+    _last_running_process: Process | None = None
     _current_process: Process | None = None
 
     def __init__(
@@ -333,6 +334,8 @@ class MultiLevelFeedbackQueue:
         )
 
     def on_tick(self):
+        self._tick += 1
+
         # IO Tick
         self._io.on_tick()
 
@@ -346,12 +349,12 @@ class MultiLevelFeedbackQueue:
                 queue.on_tick()
                 break
 
-        self._tick += 1
 
     def is_empty(self):
         return all(
             [queue.is_empty() for queue in self._priority_queues]
             + [len(self._future_processes) == 0]
+            + [self._io.is_empty()]
         )
 
     def push_arriving_processes(self):
@@ -431,12 +434,13 @@ class MultiLevelFeedbackQueue:
                 next_process = queue.select_new_process()
                 break
 
-        if self._current_process != next_process:
-            self._current_process = next_process
-            self.reset_context_switch_counter()
+        if next_process and self._last_running_process != next_process:
+            self._last_running_process = next_process
+            self._current_process = None
+            self._context_switch_counter = self._context_switch_time
 
-    def reset_context_switch_counter(self):
-        self._context_switch_counter = self._context_switch_time
+        if self._context_switch_counter <= 0:
+            self._current_process = next_process
 
     def run(self):
         self.context_switch()
@@ -488,7 +492,7 @@ def get_fake_input() -> tuple[int, int, int, list[Process]]:
     # I gave up on making tests
     time_allotment_q1: int = 8
     time_allotment_q2: int = 8
-    context_switch_time: int = 0
+    context_switch_time: int = 2
     processes: list[Process] = [
         Process('B', 0, [5, 2, 5, 2, 5]),
         Process('A', 2, [2, 2]),
