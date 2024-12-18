@@ -3,6 +3,65 @@ from collections.abc import Sequence
 from typing import Protocol
 
 
+class Process:
+    _process_name: str
+    _arrival_time: int
+    _burst_times: list[int]
+    _current_burst_time_index: int
+    _finish_time: int | None
+
+    def __init__(
+        self, process_name: str, arrival_time: int, burst_times: list[int]
+    ) -> None:
+        self._process_name = process_name
+        self._arrival_time = arrival_time
+        self._burst_times = burst_times
+
+        self._current_burst_time_index = 0
+        self._finish_time = None
+
+    def __repr__(self) -> str:
+        return self._process_name
+
+    def __str__(self) -> str:
+        return self._process_name
+
+    @property
+    def process_name(self) -> str:
+        return self._process_name
+
+    @property
+    def arrival_time(self) -> int:
+        return self._arrival_time
+
+    @property
+    def finish_time(self) -> int:
+        if self._finish_time:
+            return self._finish_time
+
+        raise Exception(
+            "Error: Attempted to access property 'finish_time' of unfinished process."
+        )
+
+    @property
+    def turnaround_time(self) -> int:
+        if self._finish_time:
+            return self._finish_time - self._arrival_time
+
+        raise Exception(
+            "Error: Attempted to access property 'turnaround_time' of unfinished process."
+        )
+
+    @property
+    def waiting_time(self) -> int:
+        if self._finish_time:
+            return self._finish_time - self._arrival_time - sum(self._burst_times)
+
+        raise Exception(
+            "Error: Attempted to access property 'waiting_time' of unfinished process."
+        )
+
+
 class PriorityQueue(Protocol):
     _time_allotment: int | None
     _processes: list[Process]
@@ -105,58 +164,6 @@ class SJFPriorityQueue:
         self._processes.append(process)
 
 
-class Process:
-    _process_name: str
-    _arrival_time: int
-    _burst_times: list[int]
-    _current_burst_time_index: int
-    _finish_time: int | None
-
-    def __init__(
-        self, process_name: str, arrival_time: int, burst_times: list[int]
-    ) -> None:
-        self._process_name = process_name
-        self._arrival_time = arrival_time
-        self._burst_times = burst_times
-
-        self._current_burst_time_index = 0
-        self._finish_time = None
-
-    def __repr__(self) -> str:
-        return self._process_name
-
-    def __str__(self) -> str:
-        return self._process_name
-
-    @property
-    def process_name(self) -> str:
-        return self._process_name
-
-    @property
-    def arrival_time(self) -> int:
-        return self._arrival_time
-    
-    @property
-    def finish_time(self) -> int:
-        if self._finish_time:
-            return self._finish_time
-        
-        raise Exception('Error: Attempted to access property \'finish_time\' of unfinished process.')
-
-    @property
-    def turnaround_time(self) -> int:
-        if self._finish_time:
-            return self._finish_time - self._arrival_time
-        
-        raise Exception('Error: Attempted to access property \'turnaround_time\' of unfinished process.')
-
-    @property
-    def waiting_time(self) -> int:
-        if self._finish_time:
-            return self._finish_time - self._arrival_time - sum(self._burst_times)
-        
-        raise Exception('Error: Attempted to access property \'waiting_time\' of unfinished process.')
-
 class MultiLevelFeedbackQueue:
     _tick: int = 0
     _future_processes: Sequence[Process]
@@ -206,7 +213,6 @@ class MultiLevelFeedbackQueue:
         # increment tick counter
         self._tick += 1
 
-
     def run(self):
         for _ in range(10):
             self.on_tick()
@@ -218,10 +224,14 @@ class MultiLevelFeedbackQueue:
 
         # print turnaround time of each process
         for p in self._future_processes:
-            print(f'Turn-around time for Process {p.process_name} : {p.finish_time} - {p.arrival_time} = {p.turnaround_time} ms')
+            print(
+                f'Turn-around time for Process {p.process_name} : {p.finish_time} - {p.arrival_time} = {p.turnaround_time} ms'
+            )
 
         # print average turnaround time
-        print(f'Average Turn-around time = {sum([p.turnaround_time for p in self._future_processes])/len(self._future_processes)} ms')
+        print(
+            f'Average Turn-around time = {sum([p.turnaround_time for p in self._future_processes])/len(self._future_processes)} ms'
+        )
 
         # process turnaround times
         for p in self._future_processes:
