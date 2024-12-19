@@ -380,6 +380,7 @@ class MultiLevelFeedbackQueue:
     _context_switch_counter: int = 0
     _last_running_process: Process | None = None
     _current_process: Process | None = None
+    _demoted_process_names: list[str]
 
     def __init__(
         self,
@@ -456,9 +457,11 @@ class MultiLevelFeedbackQueue:
         """
         Reassign complete, demoted and requeue processes on Queues (either IO, Q1, Q2, or Q3)
         """
+        # reset process lists
         completed_processes: list[Process] = []
         burst_completed_processes: list[Process] = []
         demoted_processes: list[Process] = []
+        self._demoted_process_names = []
 
         # Check all priority queues and sort into three separate lists
         for queue in self._priority_queues:
@@ -492,7 +495,8 @@ class MultiLevelFeedbackQueue:
 
         # Reassign demoted processes
         for process in demoted_processes:
-            print(f'{process.process_name} DEMOTED')
+            #stash list of demoted process names for output later
+            self._demoted_process_names.append(process.process_name)
             process.demote()
             self._priority_queues[process.queue_level].push_process(process)
 
@@ -504,6 +508,10 @@ class MultiLevelFeedbackQueue:
                 self._priority_queues[process.queue_level].push_process(process)
             else:
                 self._io.push_process(process)
+    
+    def output_demoted_processes(self):
+        for proc_str in self._demoted_process_names:
+            print(f'{proc_str} DEMOTED')
 
     def context_switch(self):
         # ASSUMPTIONS:
@@ -581,6 +589,8 @@ class MultiLevelFeedbackQueue:
 
             if not self._io.is_empty:
                 print(f'I/O : {self._io}')
+
+            self.output_demoted_processes()
 
             print()
         # output final statistics of simulation (turnaround and waiting time)
