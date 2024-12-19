@@ -11,8 +11,9 @@ from src.main import (
 )
 from src.main import Process
 
-INPUTS_PATH: Path = Path.cwd() / 'input'
-OUTPUTS_PATH: Path = Path.cwd() / 'output'
+# note that pytest is called from the root directory, not from /tests
+INPUTS_PATH: Path = Path.cwd() / 'tests' / 'input'
+OUTPUTS_PATH: Path = Path.cwd() / 'tests' / 'output'
 
 
 def generate_mlfq(
@@ -34,11 +35,10 @@ def generate_mlfq(
 
 def test_main(monkeypatch: MonkeyPatch, capfd: CaptureFixture[str]) -> None:
     input_files: list[Path] = [f for f in INPUTS_PATH.iterdir() if f.is_file()]
-    output_files: list[Path] = [f for f in INPUTS_PATH.iterdir() if f.is_file()]
+    output_files: list[Path] = [f for f in OUTPUTS_PATH.iterdir() if f.is_file()]
 
     for input_file, output_file in zip(input_files, output_files):
-        # pass string value to stdin for main.main()
-        test_input: str = open(input_file.name, 'r').read()
+        test_input: str = open(input_file, 'r').read()
         monkeypatch.setattr('sys.stdin', StringIO(test_input))
 
         # call main() from /src/main.py
@@ -48,7 +48,7 @@ def test_main(monkeypatch: MonkeyPatch, capfd: CaptureFixture[str]) -> None:
         out: str
         err: str
         out, err = capfd.readouterr()
-        assert out == open(output_file.name, 'r').read()
+        assert out == open(output_file, 'r').read()
         assert err == ''
 
 
