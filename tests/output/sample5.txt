@@ -99,36 +99,36 @@ Queues : [];[];[A]
 CPU : B
 
 At Time = 24
-Queues : [];[];[B]
-CPU : A
+Queues : [];[];[A]
+CPU : B
 B DEMOTED
 
 At Time = 25
-Queues : [];[];[B]
+B DONE
+Queues : [];[];[]
 CPU : A
 
 At Time = 26
-Queues : [];[];[B]
+Queues : [];[];[]
 CPU : A
 
 At Time = 27
-Queues : [];[];[B]
+Queues : [];[];[]
 CPU : A
 
 At Time = 28
-A DONE
 Queues : [];[];[]
-CPU : B
+CPU : A
 
 At Time = 29
-B DONE
+A DONE
 Queues : [];[];[]
 CPU : []
 
 SIMULATION DONE
 
-Turn-around time for Process A : 28 - 0 = 28 ms
-Turn-around time for Process B : 29 - 0 = 29 ms
-Average Turn-around time = 28.5 ms
-Waiting time for Process A : 12 ms
-Waiting time for Process B : 16 ms
+Turn-around time for Process A : 29 - 0 = 29 ms
+Turn-around time for Process B : 25 - 0 = 25 ms
+Average Turn-around time = 27 ms
+Waiting time for Process A : 13 ms
+Waiting time for Process B : 12 ms
