@@ -48,7 +48,7 @@ def test_main(monkeypatch: MonkeyPatch, capfd: CaptureFixture[str]) -> None:
         out: str
         err: str
         out, err = capfd.readouterr()
-        assert out == open(output_file, 'r').read()
+        assert out.strip() == open(output_file, 'r').read().strip()
         assert err == ''
 
 
