@@ -1,0 +1,100 @@
+At Time = 0
+Arriving : [A, B]
+Queues : [B];[];[]
+CPU : A
+
+At Time = 1
+Queues : [B];[];[]
+CPU : A
+
+At Time = 2
+Queues : [B];[];[]
+CPU : A
+
+At Time = 3
+Queues : [B];[];[]
+CPU : A
+
+At Time = 4
+Queues : [A];[];[]
+CPU : B
+
+At Time = 5
+Queues : [A];[];[]
+CPU : B
+
+At Time = 6
+Queues : [A];[];[]
+CPU : B
+
+At Time = 7
+Queues : [A];[];[]
+CPU : B
+
+At Time = 8
+Queues : [];[];[]
+CPU : A
+I/O : [B]
+
+At Time = 9
+Queues : [];[];[]
+CPU : A
+I/O : [B]
+
+At Time = 10
+Queues : [];[];[]
+CPU : A
+I/O : [B]
+
+At Time = 11
+Queues : [B];[];[]
+CPU : A
+
+At Time = 12
+Queues : [];[];[]
+CPU : B
+I/O : [A]
+
+At Time = 13
+Queues : [];[];[]
+CPU : B
+I/O : [A]
+
+At Time = 14
+Queues : [];[];[]
+CPU : B
+I/O : [A]
+
+At Time = 15
+Queues : [A];[];[]
+CPU : B
+
+At Time = 16
+Queues : [B];[];[]
+CPU : A
+
+At Time = 17
+Queues : [B];[];[]
+CPU : A
+
+At Time = 18
+A DONE
+Queues : [];[];[]
+CPU : B
+
+At Time = 19
+Queues : [];[];[]
+CPU : B
+
+At Time = 20
+B DONE
+Queues : [];[];[]
+CPU : []
+
+SIMULATION DONE
+
+Turn-around time for Process A : 18 - 0 = 18 ms
+Turn-around time for Process B : 20 - 0 = 20 ms
+Average Turn-around time = 19 ms
+Waiting time for Process A : 5 ms
+Waiting time for Process B : 7 ms
