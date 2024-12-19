@@ -278,16 +278,19 @@ class FCFSPriorityQueue(PriorityQueue):
 class SJFPriorityQueue(PriorityQueue):
     _time_allotment: int | None
     _processes: list[Process] = []
-    _current_process_index: int = 0
+    _initial_burst_times: list[int] = []
+    _current_process_index: int = -1
 
     def __init__(self, time_allotment: int | None = None) -> None:
         self._time_allotment = time_allotment
 
     def __repr__(self) -> str:
-        return str(self._processes)
+        # Processes are ordered in the queue based on the shortest initial burst time
+        return str(sorted(self._processes, key=lambda p: (self._initial_burst_times[self._processes.index(p)], p.process_name)))
 
     def __str__(self) -> str:
-        return str(self._processes)
+        # Processes are ordered in the queue based on the shortest initial burst time
+        return str(sorted(self._processes, key=lambda p: (self._initial_burst_times[self._processes.index(p)], p.process_name)))
 
     @property
     def num_processes(self) -> int:
@@ -309,6 +312,7 @@ class SJFPriorityQueue(PriorityQueue):
 
     def push_process(self, process: Process):
         self._processes.append(process)
+        self._initial_burst_times.append(process.remaining_current_burst)
 
     def release_current_on_expiry(self) -> Process | None:
         if self.is_empty:
@@ -319,15 +323,28 @@ class SJFPriorityQueue(PriorityQueue):
             self._time_allotment
             and not current_process.is_within_allotment(self._time_allotment)
         ):
-            return self._processes.pop(self._current_process_index)
+            exiting_process = self._processes.pop(self._current_process_index)
+            self._initial_burst_times.pop(self._current_process_index)
+            self._current_process_index = -1
+            return exiting_process
 
     def select_new_process(self) -> Process | None:
         if self.is_empty:
             return
 
+        # ASSUMPTION: Chosen SJF process in a queue cannot be changed until burst completion
+        # This means that new processes may only be selected no active process exists
+        # In other words, no pre-emption unless its due to higher queue priority
+        # Although state of SJF will remain the same upon return
+        if self._current_process_index >= 0:
+            return self._processes[self._current_process_index]
+
+        # ASSUMPTION: SJF is based on the remaining amount of (current) burst time upon priority queue entry
+        # This was assumed since it is also assumed that each queue is independent from one another
+        # Thus, processes that enter a queue should be considered as if they had never entered a queue before
         self._current_process_index = min(
             range(len(self._processes)),
-            key=lambda i: self._processes[i].remaining_current_burst,
+            key=lambda i: (self._initial_burst_times[i]),
         )
         return self._processes[self._current_process_index]
 
