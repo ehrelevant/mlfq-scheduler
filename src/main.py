@@ -529,6 +529,30 @@ class MultiLevelFeedbackQueue:
         if self._context_switch_counter <= 0:
             self._current_process = next_process
 
+    def final_stats(self) -> None:
+        print('SIMULATION DONE\n')
+
+        # sort all processses in alphabetical order
+        self._all_processes = sorted(
+            self._all_processes,
+            key=lambda p: p.process_name,
+        )
+
+        # print turnaround time of each process
+        for p in self._all_processes:
+            print(
+                f'Turn-around time for Process {p.process_name} : {p.completion_time} - {p.arrival_time} = {p.turnaround_time} ms'
+            )
+
+        # print average turnaround time
+        print(
+            f'Average Turn-around time = {sum([p.turnaround_time for p in self._all_processes])/len(self._all_processes)} ms'
+        )
+
+        # print waiting time of each process
+        for p in self._all_processes:
+            print(f'Waiting time for Process {p.process_name} : {p.waiting_time} ms')
+
     def run(self):
         """
         Run the MLFQ simulation.
@@ -559,26 +583,9 @@ class MultiLevelFeedbackQueue:
                 print(f'I/O : {self._io}')
 
             print()
-
-        print('SIMULATION DONE\n')
-
-        # todo: remove return once process running works
-        # return
-
-        # print turnaround time of each process
-        for p in self._all_processes:
-            print(
-                f'Turn-around time for Process {p.process_name} : {p.completion_time} - {p.arrival_time} = {p.turnaround_time} ms'
-            )
-
-        # print average turnaround time
-        print(
-            f'Average Turn-around time = {sum([p.turnaround_time for p in self._all_processes])/len(self._all_processes)} ms'
-        )
-
-        # print waiting time of each process
-        for p in self._all_processes:
-            print(f'Waiting time for Process {p.process_name} : {p.waiting_time} ms')
+        # output final statistics of simulation (turnaround and waiting time)
+        self.final_stats()
+        return
 
 
 # ---
