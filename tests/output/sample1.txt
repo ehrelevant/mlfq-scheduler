@@ -86,12 +86,14 @@ Queues : [];[C];[]
 CPU : B
 
 At Time = 20
-Queues : [B];[];[]
+Queues : [];[];[]
 CPU : C
+I/O : [B]
 
 At Time = 21
-Queues : [B];[];[]
+Queues : [];[];[]
 CPU : C
+I/O : [B]
 
 At Time = 22
 Queues : [];[C];[]
@@ -139,9 +141,9 @@ Queues : [];[];[]
 CPU : C
 
 At Time = 33
-C DEMOTED
 Queues : [];[];[]
 CPU : C
+C DEMOTED
 
 At Time = 34
 Queues : [];[];[]
