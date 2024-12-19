@@ -555,7 +555,7 @@ class MultiLevelFeedbackQueue:
                 print('CPU : []')
 
             if not self._io.is_empty:
-                print(f'IO : {self._io}')
+                print(f'I/O : {self._io}')
 
             print()
 
@@ -575,7 +575,7 @@ class MultiLevelFeedbackQueue:
             f'Average Turn-around time = {sum([p.turnaround_time for p in self._all_processes])/len(self._all_processes)} ms'
         )
 
-        # process turnaround times
+        # print waiting time of each process
         for p in self._all_processes:
             print(f'Waiting time for Process {p.process_name} : {p.waiting_time} ms')
 
@@ -614,7 +614,7 @@ def get_fake_input() -> tuple[int, int, int, list[Process]]:
 
 def main() -> None:
     time_allotment_q1, time_allotment_q2, context_switch_time, processes = (
-        get_fake_input()
+        get_user_input()
     )
 
     priority_queues: list[PriorityQueue] = [
@@ -626,8 +626,6 @@ def main() -> None:
     mlfq: MultiLevelFeedbackQueue = MultiLevelFeedbackQueue(
         processes, priority_queues, context_switch_time
     )
-
-    print(mlfq)
 
     mlfq.run()
 
