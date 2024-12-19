@@ -1,0 +1,287 @@
+At Time = 0
+Arriving : [A]
+Queues : [];[];[]
+CPU : A
+
+At Time = 1
+A DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 2
+Arriving : [B]
+Queues : [];[];[]
+CPU : B
+
+At Time = 3
+Queues : [];[];[]
+CPU : B
+
+At Time = 4
+B DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 5
+Arriving : [C]
+Queues : [];[];[]
+CPU : C
+
+At Time = 6
+C DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 7
+Arriving : [D]
+Queues : [];[];[]
+CPU : D
+
+At Time = 8
+Queues : [];[];[]
+CPU : D
+
+At Time = 9
+Queues : [];[];[]
+CPU : D
+
+At Time = 10
+Queues : [];[];[]
+CPU : D
+
+At Time = 11
+D DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 12
+Arriving : [E]
+Queues : [];[];[]
+CPU : E
+
+At Time = 13
+Queues : [];[];[]
+CPU : E
+
+At Time = 14
+Queues : [];[];[]
+CPU : E
+
+At Time = 15
+Queues : [];[];[]
+CPU : E
+
+At Time = 16
+Queues : [];[];[]
+CPU : E
+
+At Time = 17
+E DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 18
+Queues : [];[];[]
+CPU : []
+
+At Time = 19
+Queues : [];[];[]
+CPU : []
+
+At Time = 20
+Arriving : [F]
+Queues : [];[];[]
+CPU : F
+
+At Time = 21
+F DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 22
+Queues : [];[];[]
+CPU : []
+
+At Time = 23
+Queues : [];[];[]
+CPU : []
+
+At Time = 24
+Arriving : [G]
+Queues : [];[];[]
+CPU : G
+
+At Time = 25
+Queues : [];[];[]
+CPU : G
+
+At Time = 26
+Queues : [];[];[]
+CPU : G
+
+At Time = 27
+G DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 28
+Queues : [];[];[]
+CPU : []
+
+At Time = 29
+Arriving : [H]
+Queues : [];[];[]
+CPU : H
+
+At Time = 30
+H DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 31
+Queues : [];[];[]
+CPU : []
+
+At Time = 32
+Queues : [];[];[]
+CPU : []
+
+At Time = 33
+Arriving : [I]
+Queues : [];[];[]
+CPU : I
+
+At Time = 34
+Queues : [];[];[]
+CPU : I
+
+At Time = 35
+I DONE
+Queues : [];[];[]
+CPU : []
+
+At Time = 36
+Queues : [];[];[]
+CPU : []
+
+At Time = 37
+Queues : [];[];[]
+CPU : []
+
+At Time = 38
+Queues : [];[];[]
+CPU : []
+
+At Time = 39
+Queues : [];[];[]
+CPU : []
+
+At Time = 40
+Queues : [];[];[]
+CPU : []
+
+At Time = 41
+Queues : [];[];[]
+CPU : []
+
+At Time = 42
+Queues : [];[];[]
+CPU : []
+
+At Time = 43
+Queues : [];[];[]
+CPU : []
+
+At Time = 44
+Queues : [];[];[]
+CPU : []
+
+At Time = 45
+Queues : [];[];[]
+CPU : []
+
+At Time = 46
+Queues : [];[];[]
+CPU : []
+
+At Time = 47
+Queues : [];[];[]
+CPU : []
+
+At Time = 48
+Queues : [];[];[]
+CPU : []
+
+At Time = 49
+Queues : [];[];[]
+CPU : []
+
+At Time = 50
+Queues : [];[];[]
+CPU : []
+
+At Time = 51
+Queues : [];[];[]
+CPU : []
+
+At Time = 52
+Queues : [];[];[]
+CPU : []
+
+At Time = 53
+Queues : [];[];[]
+CPU : []
+
+At Time = 54
+Queues : [];[];[]
+CPU : []
+
+At Time = 55
+Arriving : [J]
+Queues : [];[];[]
+CPU : J
+
+At Time = 56
+Queues : [];[];[]
+CPU : J
+
+At Time = 57
+Queues : [];[];[]
+CPU : J
+
+At Time = 58
+Queues : [];[];[]
+CPU : J
+
+At Time = 59
+Queues : [];[];[]
+CPU : J
+
+At Time = 60
+J DONE
+Queues : [];[];[]
+CPU : []
+
+SIMULATION DONE
+
+Turn-around time for Process A : 1 - 0 = 1 ms
+Turn-around time for Process B : 4 - 2 = 2 ms
+Turn-around time for Process C : 6 - 5 = 1 ms
+Turn-around time for Process D : 11 - 7 = 4 ms
+Turn-around time for Process E : 17 - 12 = 5 ms
+Turn-around time for Process F : 21 - 20 = 1 ms
+Turn-around time for Process G : 27 - 24 = 3 ms
+Turn-around time for Process H : 30 - 29 = 1 ms
+Turn-around time for Process I : 35 - 33 = 2 ms
+Turn-around time for Process J : 60 - 55 = 5 ms
+Average Turn-around time = 2.5 ms
+Waiting time for Process A : 0 ms
+Waiting time for Process B : 0 ms
+Waiting time for Process C : 0 ms
+Waiting time for Process D : 0 ms
+Waiting time for Process E : 0 ms
+Waiting time for Process F : 0 ms
+Waiting time for Process G : 0 ms
+Waiting time for Process H : 0 ms
+Waiting time for Process I : 0 ms
+Waiting time for Process J : 0 ms
