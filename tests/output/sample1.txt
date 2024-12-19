@@ -197,6 +197,11 @@ At Time = 46
 Queues : [];[];[]
 CPU : C
 
+At Time = 47
+C DONE
+Queues : [];[];[]
+CPU : []
+
 SIMULATION DONE
 
 Turn-around time for Process A : 12 - 2 = 10 ms

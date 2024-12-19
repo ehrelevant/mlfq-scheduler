@@ -6,6 +6,7 @@ from typing import Protocol
 class Process:
     _process_name: str
     _arrival_time: int
+    _total_burst_time: int
     _burst_times: list[int]
     _burst_index: int
     _queue_level: int
@@ -19,6 +20,7 @@ class Process:
         self._process_name = process_name
         self._arrival_time = arrival_time
         self._burst_times = burst_times
+        self._total_burst_time = sum(self._burst_times)
 
         self._burst_index = 0
         self._queue_level = 0
@@ -66,7 +68,7 @@ class Process:
             )
 
         # todo: fix formula for waiting time
-        return self._completion_time - self._arrival_time - self._cpu_time
+        return self._completion_time - self._arrival_time - self._total_burst_time
 
     @property
     def queue_level(self) -> int:
@@ -116,6 +118,14 @@ class Process:
         self._queue_level += 1
         self._time_in_queue = 0
 
+    def update_time_in_queue(self, time: int | None):
+        if time == None:
+            #do nothing
+            return
+        else:
+            #reset_time in queue
+            self._time_in_queue = 0
+
     def end_process(self, time: int):
         self._completion_time = time
 
@@ -129,6 +139,9 @@ class PriorityQueue(Protocol):
 
     @property
     def processes(self) -> list[Process]: ...
+
+    @property
+    def time_allotment(self) -> int | None: ...
 
     @property
     def is_empty(self) -> bool: ...
@@ -184,6 +197,10 @@ class RRPriorityQueue(PriorityQueue):
     @property
     def processes(self) -> list[Process]:
         return self._processes
+
+    @property
+    def time_allotment(self) -> int | None:
+        return self._time_allotment
 
     @property
     def is_empty(self) -> bool:
@@ -245,6 +262,10 @@ class FCFSPriorityQueue(PriorityQueue):
         return self._processes
 
     @property
+    def time_allotment(self) -> int | None:
+        return self._time_allotment
+
+    @property
     def is_empty(self) -> bool:
         return len(self._processes) == 0
 
@@ -296,6 +317,10 @@ class SJFPriorityQueue(PriorityQueue):
     @property
     def processes(self) -> list[Process]:
         return self._processes
+    
+    @property
+    def time_allotment(self) -> int | None:
+        return self._time_allotment
 
     @property
     def is_empty(self) -> bool:
@@ -505,6 +530,8 @@ class MultiLevelFeedbackQueue:
             process.next_burst
 
             if process.is_CPU_burst:
+                # reset time allotment when going to CPU from IO
+                process.update_time_in_queue(self._priority_queues[process.queue_level].time_allotment)
                 self._priority_queues[process.queue_level].push_process(process)
             else:
                 self._io.push_process(process)
@@ -553,8 +580,10 @@ class MultiLevelFeedbackQueue:
             )
 
         # print average turnaround time
+        avg_ta_time = round(sum([p.turnaround_time for p in self._all_processes])/len(self._all_processes), 3)
+        avg_ta_time_int = int(avg_ta_time)
         print(
-            f'Average Turn-around time = {sum([p.turnaround_time for p in self._all_processes])/len(self._all_processes)} ms'
+            f'Average Turn-around time = {avg_ta_time_int if float(avg_ta_time_int) == avg_ta_time else avg_ta_time} ms'
         )
 
         # print waiting time of each process
