@@ -119,11 +119,11 @@ class Process:
         self._time_in_queue = 0
 
     def update_time_in_queue(self, time: int | None):
-        if time == None:
-            #do nothing
+        if time is None:
+            # do nothing
             return
         else:
-            #reset_time in queue
+            # reset_time in queue
             self._time_in_queue = 0
 
     def end_process(self, time: int):
@@ -307,11 +307,27 @@ class SJFPriorityQueue(PriorityQueue):
 
     def __repr__(self) -> str:
         # Processes are ordered in the queue based on the shortest initial burst time
-        return str(sorted(self._processes, key=lambda p: (self._initial_burst_times[self._processes.index(p)], p.process_name)))
+        return str(
+            sorted(
+                self._processes,
+                key=lambda p: (
+                    self._initial_burst_times[self._processes.index(p)],
+                    p.process_name,
+                ),
+            )
+        )
 
     def __str__(self) -> str:
         # Processes are ordered in the queue based on the shortest initial burst time
-        return str(sorted(self._processes, key=lambda p: (self._initial_burst_times[self._processes.index(p)], p.process_name)))
+        return str(
+            sorted(
+                self._processes,
+                key=lambda p: (
+                    self._initial_burst_times[self._processes.index(p)],
+                    p.process_name,
+                ),
+            )
+        )
 
     @property
     def num_processes(self) -> int:
@@ -320,7 +336,7 @@ class SJFPriorityQueue(PriorityQueue):
     @property
     def processes(self) -> list[Process]:
         return self._processes
-    
+
     @property
     def time_allotment(self) -> int | None:
         return self._time_allotment
@@ -537,7 +553,7 @@ class MultiLevelFeedbackQueue:
 
         # Reassign demoted processes
         for process in demoted_processes:
-            #stash list of demoted process names for output later
+            # stash list of demoted process names for output later
             self._demoted_process_names.append(process.process_name)
             process.demote()
             self._priority_queues[process.queue_level].push_process(process)
@@ -548,11 +564,13 @@ class MultiLevelFeedbackQueue:
 
             if process.is_CPU_burst:
                 # reset time allotment when going to CPU from IO
-                process.update_time_in_queue(self._priority_queues[process.queue_level].time_allotment)
+                process.update_time_in_queue(
+                    self._priority_queues[process.queue_level].time_allotment
+                )
                 self._priority_queues[process.queue_level].push_process(process)
             else:
                 self._io.push_process(process)
-    
+
     def output_demoted_processes(self):
         for proc_str in self._demoted_process_names:
             print(f'{proc_str} DEMOTED')
@@ -597,7 +615,11 @@ class MultiLevelFeedbackQueue:
             )
 
         # print average turnaround time
-        avg_ta_time = round(sum([p.turnaround_time for p in self._all_processes])/len(self._all_processes), 3)
+        avg_ta_time = round(
+            sum([p.turnaround_time for p in self._all_processes])
+            / len(self._all_processes),
+            3,
+        )
         avg_ta_time_int = int(avg_ta_time)
         print(
             f'Average Turn-around time = {avg_ta_time_int if float(avg_ta_time_int) == avg_ta_time else avg_ta_time} ms'
