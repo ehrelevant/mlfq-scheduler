@@ -1,7 +1,8 @@
-# from io import StringIO
-from pytest import CaptureFixture  # , MonkeyPatch
+from io import StringIO
+from pytest import CaptureFixture, MonkeyPatch
+from pathlib import Path
 
-# from src import main
+from src import main
 from src.main import (
     MultiLevelFeedbackQueue,
     RRPriorityQueue,
@@ -9,6 +10,9 @@ from src.main import (
     SJFPriorityQueue,
 )
 from src.main import Process
+
+INPUTS_PATH: Path = Path.cwd() / 'input'
+OUTPUTS_PATH: Path = Path.cwd() / 'output'
 
 
 def generate_mlfq(
@@ -28,33 +32,24 @@ def generate_mlfq(
     )
 
 
-"""
-def test_sample_run(monkeypatch: MonkeyPatch, capfd: CaptureFixture[str]):
-    # pass string value to stdin for main.main()
-    test_input: str = '\n'.join(
-        ['3', '8', '8', '0', 'B;0;5;2;5;2;5', 'A;2;2;2;6', 'C;0;30']
-    )
-    monkeypatch.setattr('sys.stdin', StringIO(test_input))
+def test_main(monkeypatch: MonkeyPatch, capfd: CaptureFixture[str]) -> None:
+    input_files: list[Path] = [f for f in INPUTS_PATH.iterdir() if f.is_file()]
+    output_files: list[Path] = [f for f in INPUTS_PATH.iterdir() if f.is_file()]
 
-    # call main() from /src/main.py
-    main.main()
+    for input_file, output_file in zip(input_files, output_files):
+        # pass string value to stdin for main.main()
+        test_input: str = open(input_file.name, 'r').read()
+        monkeypatch.setattr('sys.stdin', StringIO(test_input))
 
-    # capture stdout and stderr outputs from main.main()
-    out: str; err: str
-    out, err = capfd.readouterr()
-    assert out == '\n'.join(
-        [
-            # todo 1: figure out the actual output for this test case
-            # todo 2: maybe create a generic (stdin -> stdout, stderr) callback function
-            # todo 3: maybe implement [todo 2] by reading stdin from a .txt file, and comparing outputs with stdout/stderr from other .txt files
-            'Processes: [B, A, C]',
-            'PriorityQueues: [[], [], []]',
-            'Context Switch Time: 0',
-            '',
-        ]
-    )
-    assert err == ''
-"""
+        # call main() from /src/main.py
+        main.main()
+
+        # capture stdout and stderr outputs from main.main()
+        out: str
+        err: str
+        out, err = capfd.readouterr()
+        assert out == open(output_file.name, 'r').read()
+        assert err == ''
 
 
 def test_mlfq_instantiation(capfd: CaptureFixture[str]) -> None:
