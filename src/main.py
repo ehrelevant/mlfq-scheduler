@@ -476,6 +476,7 @@ class MultiLevelFeedbackQueue:
         io_completed_processes = self._io.release_expired_processes()
         for process in io_completed_processes:
             if process.is_process_complete:
+                completed_processes.append(process)
                 process.end_process(self._tick)
             else:
                 burst_completed_processes.append(process)
