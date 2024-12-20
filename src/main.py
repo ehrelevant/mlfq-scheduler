@@ -369,8 +369,8 @@ class SJFPriorityQueue(PriorityQueue):
         # If process does not come from IO (i.e. from demotion), do pre-emption
         if not process.is_from_IO:
             self._current_process_index = -1
-            # Capture snapshot of burst times upon entry to queue
-            self._initial_burst_times = [proc.remaining_current_burst for proc in self._processes]
+        # Capture snapshot of burst times upon entry to queue
+        self._initial_burst_times = [proc.remaining_current_burst for proc in self._processes]
 
     def release_current_on_expiry(self) -> Process | None:
         if self.is_empty:
