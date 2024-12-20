@@ -347,7 +347,14 @@ class SJFPriorityQueue(PriorityQueue):
 
     @property
     def processes(self) -> list[Process]:
-        return self._processes
+        # Processes are ordered in the queue based on the shortest initial burst time
+        return sorted(
+                self._processes,
+                key=lambda p: (
+                    #self._initial_burst_times[self._processes.index(p)],
+                    p.process_name,
+                ),
+            )
 
     @property
     def time_allotment(self) -> int | None:
