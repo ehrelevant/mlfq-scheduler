@@ -2,14 +2,14 @@ from io import StringIO
 from pytest import CaptureFixture, MonkeyPatch
 from pathlib import Path
 
-from src import main
-from src.main import (
+from src import mlfq
+from src.mlfq import (
     MultiLevelFeedbackQueue,
     RRPriorityQueue,
     FCFSPriorityQueue,
     SJFPriorityQueue,
 )
-from src.main import Process
+from src.mlfq import Process
 
 # note that pytest is called from the root directory, not from /tests
 INPUTS_PATH: Path = Path.cwd() / 'tests' / 'input'
@@ -42,7 +42,7 @@ def test_main(monkeypatch: MonkeyPatch, capfd: CaptureFixture[str]) -> None:
         monkeypatch.setattr('sys.stdin', StringIO(test_input))
 
         # call main() from /src/main.py
-        main.main()
+        mlfq.main()
 
         # capture stdout and stderr outputs from main.main()
         out: str
