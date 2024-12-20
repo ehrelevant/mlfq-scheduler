@@ -600,10 +600,16 @@ class MultiLevelFeedbackQueue:
             print(f'{proc_str} DEMOTED')
 
     def context_switch(self):
-        # ASSUMPTIONS:
-        # - Context switch cannot be interrupted if already ongoing
-        #   - If a higher priority process enters mid-switch, it will have to wait to do a context switch
-        # - All priority queues are pre-emptive
+        """
+        Performs a context switch from one process (possibly, no process) to another
+
+        ASSUMPTIONS:
+        - Context switch cannot be interrupted if already ongoing
+          - If a higher priority process enters mid-switch, it will have to wait to do a context switch
+        - Context switch happens even if CPU is in idle
+          - An idle CPU still needs to load registers of a newly arrived process, so a context switch is necessary
+          - By extension, an initial context switch must also occur to load the registers of the first process
+        """
 
         if self._context_switch_counter > 0:
             return
