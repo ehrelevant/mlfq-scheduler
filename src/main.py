@@ -658,7 +658,6 @@ class MultiLevelFeedbackQueue:
         Run the MLFQ simulation.
         Note that the context switch runs first *when the program is simulated*.
         """
-        self.context_switch()
         while not self.is_empty:
             print(f'At Time = {self._tick}')
             self.push_arriving_processes()
