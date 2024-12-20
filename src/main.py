@@ -402,7 +402,7 @@ class SJFPriorityQueue(PriorityQueue):
         # Thus, processes that enter a queue should be considered as if they had never entered a queue before
         self._current_process_index = min(
             range(len(self._processes)),
-            key=lambda i: (self._initial_burst_times[i]),
+            key=lambda i: (self._initial_burst_times[i], self._processes[i].process_name),
         )
         return self._processes[self._current_process_index]
 
