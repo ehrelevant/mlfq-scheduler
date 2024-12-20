@@ -351,7 +351,7 @@ class SJFPriorityQueue(PriorityQueue):
         return sorted(
                 self._processes,
                 key=lambda p: (
-                    #self._initial_burst_times[self._processes.index(p)],
+                    self._initial_burst_times[self._processes.index(p)],
                     p.process_name,
                 ),
             )
