@@ -13,6 +13,7 @@ class Process:
     _time_in_queue: int
     _completion_time: int | None
     _cpu_time: int
+    _is_from_IO: bool
 
     def __init__(
         self, process_name: str, arrival_time: int, burst_times: list[int]
@@ -27,6 +28,11 @@ class Process:
         self._time_in_queue = 0
         self._completion_time = None
         self._cpu_time = sum(burst_times[0::2])
+
+        # Flag needed to deal with pre-emption
+        # Handling is left up to higher level interfaces
+        # Initially set to True so that newly arriving processes do not trigger pre-emption
+        self._is_from_IO = True 
 
     def __repr__(self) -> str:
         return self._process_name
@@ -93,12 +99,18 @@ class Process:
         self._time_in_queue += 1
         self._burst_times[self._burst_index] -= 1
 
-    @property
     def next_burst(self) -> None:
         """
         Updates the pointer to what burst (IO or CPU) should be running
         """
         self._burst_index += 1
+
+    @property
+    def is_from_IO(self) -> bool:
+        return self._is_from_IO
+
+    def set_from_IO(self, b: bool) -> None:
+        self._is_from_IO = b
 
     @property
     def is_burst_complete(self) -> bool:
@@ -120,10 +132,10 @@ class Process:
 
     def update_time_in_queue(self, time: int | None):
         if time is None:
-            # do nothing
+            # Do nothing
             return
         else:
-            # reset_time in queue
+            # Reset time_in_queue
             self._time_in_queue = 0
 
     def end_process(self, time: int):
@@ -353,7 +365,12 @@ class SJFPriorityQueue(PriorityQueue):
 
     def push_process(self, process: Process):
         self._processes.append(process)
-        self._initial_burst_times.append(process.remaining_current_burst)
+
+        # If process does not come from IO (i.e. from demotion), do pre-emption
+        if not process.is_from_IO:
+            self._current_process_index = -1
+            # Capture snapshot of burst times upon entry to queue
+            self._initial_burst_times = [proc.remaining_current_burst for proc in self._processes]
 
     def release_current_on_expiry(self) -> Process | None:
         if self.is_empty:
@@ -553,6 +570,9 @@ class MultiLevelFeedbackQueue:
 
         # Reassign demoted processes
         for process in demoted_processes:
+            # Unset flag denoting a process is incoming from IO
+            process.set_from_IO(False)
+
             # stash list of demoted process names for output later
             self._demoted_process_names.append(process.process_name)
             process.demote()
@@ -560,9 +580,13 @@ class MultiLevelFeedbackQueue:
 
         # Reassign based on IO or CPU burst completion
         for process in burst_completed_processes:
-            process.next_burst
+            process.next_burst()
 
             if process.is_CPU_burst:
+                # Set flag denoting a process is incoming from IO
+                # Necessary for handling pre-emption as a consequence of the separation of interfaces
+                process.set_from_IO(True)
+
                 # reset time allotment when going to CPU from IO
                 process.update_time_in_queue(
                     self._priority_queues[process.queue_level].time_allotment
