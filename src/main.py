@@ -32,7 +32,7 @@ class Process:
         # Flag needed to deal with pre-emption
         # Handling is left up to higher level interfaces
         # Initially set to True so that newly arriving processes do not trigger pre-emption
-        self._is_from_IO = True 
+        self._is_from_IO = True
 
     def __repr__(self) -> str:
         return self._process_name
@@ -349,12 +349,12 @@ class SJFPriorityQueue(PriorityQueue):
     def processes(self) -> list[Process]:
         # Processes are ordered in the queue based on the shortest initial burst time
         return sorted(
-                self._processes,
-                key=lambda p: (
-                    self._initial_burst_times[self._processes.index(p)],
-                    p.process_name,
-                ),
-            )
+            self._processes,
+            key=lambda p: (
+                self._initial_burst_times[self._processes.index(p)],
+                p.process_name,
+            ),
+        )
 
     @property
     def time_allotment(self) -> int | None:
@@ -377,7 +377,9 @@ class SJFPriorityQueue(PriorityQueue):
         if not process.is_from_IO:
             self._current_process_index = -1
         # Capture snapshot of burst times upon entry to queue
-        self._initial_burst_times = [proc.remaining_current_burst for proc in self._processes]
+        self._initial_burst_times = [
+            proc.remaining_current_burst for proc in self._processes
+        ]
 
     def release_current_on_expiry(self) -> Process | None:
         if self.is_empty:
@@ -409,7 +411,10 @@ class SJFPriorityQueue(PriorityQueue):
         # Thus, processes that enter a queue should be considered as if they had never entered a queue before
         self._current_process_index = min(
             range(len(self._processes)),
-            key=lambda i: (self._initial_burst_times[i], self._processes[i].process_name),
+            key=lambda i: (
+                self._initial_burst_times[i],
+                self._processes[i].process_name,
+            ),
         )
         return self._processes[self._current_process_index]
 
