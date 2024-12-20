@@ -1,0 +1,586 @@
+At Time = 0
+Arriving : [A, B, C]
+Queues : [A, B, C];[];[]
+CPU : []
+
+At Time = 1
+Queues : [B, C];[];[]
+CPU : A
+
+At Time = 2
+Queues : [B, C];[];[]
+CPU : A
+
+At Time = 3
+Queues : [B, C];[];[]
+CPU : A
+
+At Time = 4
+Queues : [B, C];[];[]
+CPU : A
+
+At Time = 5
+Queues : [B, C, A];[];[]
+CPU : []
+
+At Time = 6
+Queues : [C, A];[];[]
+CPU : B
+
+At Time = 7
+Queues : [C, A];[];[]
+CPU : B
+
+At Time = 8
+Queues : [C, A];[];[]
+CPU : B
+
+At Time = 9
+Queues : [C, A];[];[]
+CPU : B
+
+At Time = 10
+Queues : [C, A, B];[];[]
+CPU : []
+
+At Time = 11
+Queues : [A, B];[];[]
+CPU : C
+
+At Time = 12
+Queues : [A, B];[];[]
+CPU : C
+
+At Time = 13
+Queues : [A, B];[];[]
+CPU : C
+
+At Time = 14
+Queues : [A, B];[];[]
+CPU : C
+
+At Time = 15
+Queues : [A, B, C];[];[]
+CPU : []
+
+At Time = 16
+Queues : [B, C];[];[]
+CPU : A
+
+At Time = 17
+Queues : [B, C];[A];[]
+CPU : []
+A DEMOTED
+
+At Time = 18
+Queues : [C];[A];[]
+CPU : B
+
+At Time = 19
+Queues : [C];[A];[]
+CPU : []
+I/O : [B]
+
+At Time = 20
+Queues : [];[A];[]
+CPU : C
+I/O : [B]
+
+At Time = 21
+Queues : [B];[A, C];[]
+CPU : []
+C DEMOTED
+
+At Time = 22
+Queues : [];[A, C];[]
+CPU : B
+
+At Time = 23
+Queues : [];[A, C];[]
+CPU : B
+
+At Time = 24
+Queues : [];[A, C];[]
+CPU : B
+
+At Time = 25
+Queues : [];[A, C];[]
+CPU : B
+
+At Time = 26
+Queues : [];[A, C];[]
+CPU : B
+
+At Time = 27
+Queues : [];[A, C, B];[]
+CPU : []
+B DEMOTED
+
+At Time = 28
+Queues : [];[C, B];[]
+CPU : A
+
+At Time = 29
+Queues : [];[C, B];[]
+CPU : A
+
+At Time = 30
+Queues : [];[C, B];[]
+CPU : A
+
+At Time = 31
+Queues : [];[C, B];[]
+CPU : A
+
+At Time = 32
+Queues : [];[C, B];[]
+CPU : A
+
+At Time = 33
+Queues : [];[C, B];[]
+CPU : A
+
+At Time = 34
+Queues : [];[C, B];[A]
+CPU : []
+A DEMOTED
+
+At Time = 35
+Queues : [];[B];[A]
+CPU : C
+
+At Time = 36
+Queues : [];[B];[A]
+CPU : C
+
+At Time = 37
+Queues : [];[B];[A]
+CPU : C
+
+At Time = 38
+Queues : [];[B];[A]
+CPU : C
+
+At Time = 39
+Queues : [];[B];[A]
+CPU : C
+
+At Time = 40
+Queues : [];[B];[A]
+CPU : C
+
+At Time = 41
+Queues : [];[B];[A]
+CPU : []
+I/O : [C]
+
+At Time = 42
+Queues : [];[];[A]
+CPU : B
+I/O : [C]
+
+At Time = 43
+Queues : [];[];[A]
+CPU : B
+I/O : [C]
+
+At Time = 44
+Queues : [];[C];[A]
+CPU : []
+I/O : [B]
+
+At Time = 45
+Queues : [];[];[A]
+CPU : C
+I/O : [B]
+
+At Time = 46
+Queues : [];[];[A]
+CPU : C
+I/O : [B]
+
+At Time = 47
+Queues : [];[B];[A]
+CPU : []
+I/O : [C]
+
+At Time = 48
+Queues : [];[];[A]
+CPU : B
+I/O : [C]
+
+At Time = 49
+Queues : [];[];[A]
+CPU : B
+I/O : [C]
+
+At Time = 50
+Queues : [];[];[A]
+CPU : B
+I/O : [C]
+
+At Time = 51
+Arriving : [D]
+Queues : [D];[B, C];[A]
+CPU : []
+
+At Time = 52
+Queues : [];[B, C];[A]
+CPU : D
+
+At Time = 53
+Queues : [];[B, C];[A]
+CPU : D
+
+At Time = 54
+Queues : [];[B, C];[A]
+CPU : D
+
+At Time = 55
+Queues : [];[B, C];[A]
+CPU : D
+
+At Time = 56
+Queues : [];[B, C];[A]
+CPU : D
+
+At Time = 57
+Queues : [];[B, C, D];[A]
+CPU : []
+D DEMOTED
+
+At Time = 58
+Queues : [];[C, D];[A]
+CPU : B
+
+At Time = 59
+Queues : [];[C, D];[A]
+CPU : B
+
+At Time = 60
+Queues : [];[C, D];[A]
+CPU : B
+
+At Time = 61
+Queues : [];[C, D];[B, A]
+CPU : []
+B DEMOTED
+
+At Time = 62
+Queues : [];[D];[B, A]
+CPU : C
+
+At Time = 63
+Queues : [];[D];[B, A]
+CPU : C
+
+At Time = 64
+Queues : [];[D];[B, A]
+CPU : []
+I/O : [C]
+
+At Time = 65
+Arriving : [E, F]
+Queues : [E, F];[D];[B, A]
+CPU : []
+I/O : [C]
+
+At Time = 66
+Queues : [F];[D];[B, A]
+CPU : E
+I/O : [C]
+
+At Time = 67
+Queues : [F];[D];[B, A]
+CPU : E
+I/O : [C]
+
+At Time = 68
+Queues : [F];[D];[B, A]
+CPU : E
+I/O : [C]
+
+At Time = 69
+Queues : [F];[D];[B, A]
+CPU : E
+I/O : [C]
+
+At Time = 70
+Queues : [F];[D];[B, A]
+CPU : []
+I/O : [C, E]
+
+At Time = 71
+Queues : [];[D];[B, A]
+CPU : F
+I/O : [C, E]
+
+At Time = 72
+Queues : [];[D];[B, A]
+CPU : F
+I/O : [C, E]
+
+At Time = 73
+Queues : [];[D];[B, A]
+CPU : F
+I/O : [C, E]
+
+At Time = 74
+Queues : [];[D];[B, A]
+CPU : F
+I/O : [C, E]
+
+At Time = 75
+Queues : [E];[D];[B, A]
+CPU : []
+I/O : [C, F]
+
+At Time = 76
+Arriving : [G]
+Queues : [G];[D];[B, A]
+CPU : E
+I/O : [C, F]
+
+At Time = 77
+Queues : [G];[D];[B, A]
+CPU : E
+I/O : [C, F]
+
+At Time = 78
+Queues : [G];[D];[B, A]
+CPU : E
+I/O : [C, F]
+
+At Time = 79
+Queues : [G];[D];[B, A]
+CPU : E
+I/O : [C, F]
+
+At Time = 80
+Queues : [G, E];[D];[B, A]
+CPU : []
+I/O : [C, F]
+
+At Time = 81
+Queues : [E];[D];[B, A]
+CPU : G
+I/O : [C, F]
+
+At Time = 82
+Queues : [E];[D];[B, A]
+CPU : G
+I/O : [C, F]
+
+At Time = 83
+Queues : [E];[D];[B, A]
+CPU : G
+I/O : [C, F]
+
+At Time = 84
+Queues : [E];[D];[B, A]
+CPU : G
+I/O : [C, F]
+
+At Time = 85
+Queues : [E, G];[D];[B, A]
+CPU : []
+I/O : [C, F]
+
+At Time = 86
+Queues : [G];[D];[B, A]
+CPU : E
+I/O : [C, F]
+
+At Time = 87
+Arriving : [H]
+C DONE
+Queues : [G, H, F];[D, E];[B, A]
+CPU : []
+E DEMOTED
+
+At Time = 88
+Queues : [H, F];[D, E];[B, A]
+CPU : G
+
+At Time = 89
+Queues : [H, F];[D, E];[B, A]
+CPU : []
+I/O : [G]
+
+At Time = 90
+Queues : [F];[D, E];[B, A]
+CPU : H
+I/O : [G]
+
+At Time = 91
+Queues : [F];[D, E];[B, A]
+CPU : []
+I/O : [G, H]
+
+At Time = 92
+Queues : [];[D, E];[B, A]
+CPU : F
+I/O : [G, H]
+
+At Time = 93
+Queues : [];[D, E];[B, A]
+CPU : F
+I/O : [G, H]
+
+At Time = 94
+Queues : [];[D, E];[B, A]
+CPU : F
+I/O : [G, H]
+
+At Time = 95
+Queues : [];[D, E];[B, A]
+CPU : F
+I/O : [G, H]
+
+At Time = 96
+Queues : [];[D, E];[B, A]
+CPU : F
+I/O : [G, H]
+
+At Time = 97
+Arriving : [I]
+F DONE
+G DONE
+Queues : [I, H];[D, E];[B, A]
+CPU : []
+
+At Time = 98
+Queues : [H];[D, E];[B, A]
+CPU : I
+
+At Time = 99
+Queues : [H];[D, E];[B, A]
+CPU : I
+
+At Time = 100
+Queues : [H];[D, E];[B, A]
+CPU : I
+
+At Time = 101
+Queues : [H];[D, E];[B, A]
+CPU : I
+
+At Time = 102
+Queues : [H, I];[D, E];[B, A]
+CPU : []
+
+At Time = 103
+Queues : [I];[D, E];[B, A]
+CPU : H
+
+At Time = 104
+Queues : [I];[D, E];[B, A]
+CPU : H
+
+At Time = 105
+Queues : [I];[D, E];[B, A]
+CPU : H
+
+At Time = 106
+H DONE
+Queues : [I];[D, E];[B, A]
+CPU : []
+
+At Time = 107
+Queues : [];[D, E];[B, A]
+CPU : I
+
+At Time = 108
+I DONE
+Queues : [];[D, E];[B, A]
+CPU : []
+
+At Time = 109
+Queues : [];[E];[B, A]
+CPU : D
+
+At Time = 110
+Queues : [];[E];[B, A]
+CPU : D
+
+At Time = 111
+Queues : [];[E];[B, A]
+CPU : D
+
+At Time = 112
+D DONE
+Queues : [];[E];[B, A]
+CPU : []
+
+At Time = 113
+Queues : [];[];[B, A]
+CPU : E
+
+At Time = 114
+Queues : [];[];[B, A]
+CPU : E
+
+At Time = 115
+Queues : [];[];[B, A]
+CPU : E
+
+At Time = 116
+Queues : [];[];[B, A]
+CPU : E
+
+At Time = 117
+E DONE
+Queues : [];[];[B, A]
+CPU : []
+
+At Time = 118
+Queues : [];[];[A]
+CPU : B
+
+At Time = 119
+Queues : [];[];[A]
+CPU : B
+
+At Time = 120
+B DONE
+Queues : [];[];[A]
+CPU : []
+
+At Time = 121
+Queues : [];[];[]
+CPU : A
+
+At Time = 122
+Queues : [];[];[]
+CPU : A
+
+At Time = 123
+Queues : [];[];[]
+CPU : A
+
+At Time = 124
+A DONE
+Queues : [];[];[]
+CPU : []
+
+SIMULATION DONE
+
+Turn-around time for Process A : 124 - 0 = 124 ms
+Turn-around time for Process B : 120 - 0 = 120 ms
+Turn-around time for Process C : 87 - 0 = 87 ms
+Turn-around time for Process D : 112 - 51 = 61 ms
+Turn-around time for Process E : 117 - 65 = 52 ms
+Turn-around time for Process F : 97 - 65 = 32 ms
+Turn-around time for Process G : 97 - 76 = 21 ms
+Turn-around time for Process H : 106 - 87 = 19 ms
+Turn-around time for Process I : 108 - 97 = 11 ms
+Average Turn-around time = 58.556 ms
+Waiting time for Process A : 110 ms
+Waiting time for Process B : 95 ms
+Waiting time for Process C : 42 ms
+Waiting time for Process D : 53 ms
+Waiting time for Process E : 34 ms
+Waiting time for Process F : 11 ms
+Waiting time for Process G : 8 ms
+Waiting time for Process H : 9 ms
+Waiting time for Process I : 6 ms
